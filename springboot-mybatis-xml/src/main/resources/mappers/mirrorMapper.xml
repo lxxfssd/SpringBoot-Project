@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gac.mapper.MirrorDao">
+
+    <resultMap type="com.gac.entity.Mirror" id="BaseResultMap">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+    </resultMap>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM mirror WHERE id = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.gac.entity.Mirror"
+            keyProperty="id" useGeneratedKeys="true">
+        insert into mirror
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,name,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},
+        </trim>
+    </insert>
+
+    <select id="delete">
+        delete from mirror where 1=1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.gac.entity.Mirror">
+        update mirror
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="list" resultMap="BaseResultMap">
+        select * from mirror where 1=1
+        <if test="name != null ">
+            and <![CDATA[name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )]]>
+        </if>
+    </select>
+</mapper>
