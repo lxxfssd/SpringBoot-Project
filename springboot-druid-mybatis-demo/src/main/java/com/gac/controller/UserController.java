@@ -25,4 +25,5 @@ public class UserController {
         PageInfo<User> page = new PageInfo<User>(list);
         return page;
     }
+
 }

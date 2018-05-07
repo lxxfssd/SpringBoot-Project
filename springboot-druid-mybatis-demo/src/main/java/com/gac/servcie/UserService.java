@@ -20,4 +20,10 @@ public class UserService {
     public List<User> list(String name) {
         return userMapper.list(name);
     }
+
+    public User findOne() {
+        User user = new User();
+        user.setId(1L);
+        return userMapper.selectOne(user);
+    }
 }
