@@ -1,5 +1,8 @@
 package com.gac.configUtils;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.alibaba.druid.support.http.StatViewServlet;
+import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -7,6 +10,8 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -35,11 +40,11 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
     DataSource dataSource;//默认配置文件中的数据源
 
     /**
-     * 创建数据源 可以自己手动创建数据源, 也可以
+     * 创建数据源 可以自己手动创建数据源, 也可以注释，springbootz默认注入
      *
      * @Primary 该注解表示在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@autowire注解报错
      */
-    /*@Bean
+    @Bean
     // @Primary
     public DataSource getDataSource() throws Exception {
         Properties props = new Properties();
@@ -47,8 +52,9 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
         props.put("url", env.getProperty("spring.datasource.url"));
         props.put("username", env.getProperty("spring.datasource.username"));
         props.put("password", env.getProperty("spring.datasource.password"));
-        return DruidDataSourceFactory.createDataSource(props);
-    }*/
+        dataSource = DruidDataSourceFactory.createDataSource(props);
+        return dataSource;
+    }
 
     /**
      * 根据数据源创建SqlSessionFactory
@@ -85,5 +91,24 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
         return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public ServletRegistrationBean druidServlet() {
+        ServletRegistrationBean reg = new ServletRegistrationBean();
+        reg.setServlet(new StatViewServlet());
+        reg.addUrlMappings("/druid/*");
+        reg.addInitParameter("loginUsername", "admin");
+        reg.addInitParameter("loginPassword", "admin");
+        return reg;
+    }
+
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(new WebStatFilter());
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
+        return filterRegistrationBean;
     }
 }
