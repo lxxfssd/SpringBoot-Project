@@ -6,7 +6,9 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class localDateTest {
 
@@ -49,6 +51,20 @@ public class localDateTest {
 
     @Test
     public void timeFormat() {
+        List<String> list = new ArrayList<>();
+        list.add("hehe");
+        list.add("hehe1");
+        list.add("hehe2");
+        list.add("hehe3");
 
+        List<String> list1 = new ArrayList<>();
+        list1.add("hehe");
+        list1.add("hehe1");
+        list1.add("hehe2");
+        list1.add("hehe322");
+
+        list1.removeAll(list);
+
+        list1.forEach(System.err::println);
     }
 }

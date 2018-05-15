@@ -4,8 +4,8 @@
         <Console name="CONSOLE" target="SYSTEM_OUT">
             <PatternLayout pattern="%d [%t] %-5p [%c] %X - %m%n"/>
         </Console>
-        <RollingRandomAccessFile name="RollingFile" fileName="/letv/logs/cms/springboot-druid-mybatis.log"
-                                 filePattern="/letv/logs/cms/springboot-druid-mybatis.log.%d{yyyy-MM-dd}_%i"
+        <RollingRandomAccessFile name="RollingFile" fileName="D:/logs/springboot-druid-mybatis.log"
+                                 filePattern="D:/logs/springboot-druid-mybatis.log.%d{yyyy-MM-dd}_%i"
                                  immediateFlush="false" append="true">
             <PatternLayout>
                 <pattern>%d [%t] %-5p [%c] %X - %m%n</pattern>
@@ -25,6 +25,9 @@
             <AppenderRef ref="ASYNC"/>
         </Root>
         <logger name="com.gac" level="info" additivity="false">
+            <appender-ref ref="ASYNC"/>
+        </logger>
+        <logger name="com.gac.mapper" level="debug" additivity="false">
             <appender-ref ref="ASYNC"/>
         </logger>
     </Loggers>
