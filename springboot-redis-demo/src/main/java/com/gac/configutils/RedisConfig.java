@@ -15,11 +15,14 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 @Configuration
 @EnableCaching
-public class RedisConfig {
+public class RedisConfig implements Serializable {
+
+    private static final long serialVersionUID = 8121677160894073787L;
 
     @Bean
     public KeyGenerator biliKeyGenerator(){
@@ -61,7 +64,7 @@ public class RedisConfig {
         jackson2JsonRedisSerializer.setObjectMapper(om);
 
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
-        redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
