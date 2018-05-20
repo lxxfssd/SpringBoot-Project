@@ -1,6 +1,6 @@
 package com.gac.configUtils;
 
-import com.alibaba.druid.pool.DruidDataSourceFactory;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 import com.github.pagehelper.PageHelper;
@@ -10,6 +10,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +45,7 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
      *
      * @Primary 该注解表示在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@autowire注解报错
      */
-    @Bean
+    /*@Bean
     // @Primary
     public DataSource getDataSource() throws Exception {
         Properties props = new Properties();
@@ -54,6 +55,13 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
         props.put("password", env.getProperty("spring.datasource.password"));
         dataSource = DruidDataSourceFactory.createDataSource(props);
         return dataSource;
+    }*/
+
+    @Bean
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource druidDataSource() {
+        DruidDataSource druidDataSource = new DruidDataSource();
+        return druidDataSource;
     }
 
     /**
@@ -98,8 +106,17 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
         ServletRegistrationBean reg = new ServletRegistrationBean();
         reg.setServlet(new StatViewServlet());
         reg.addUrlMappings("/druid/*");
+        /**
+         * 如歌spring.datasource.filters=stat,wall,log4j 无法正常注册进去，可参考https://www.cnblogs.com/waterlufei/p/7056420.html
+         */
+        // IP白名单
+//        reg.addInitParameter("allow", "127.0.0.1");
+        // IP黑名单(共同存在时，deny优先于allow)
+//        reg.addInitParameter("deny", "192.168.1.100");
         reg.addInitParameter("loginUsername", "admin");
         reg.addInitParameter("loginPassword", "admin");
+        //是否能够重置数据 禁用HTML页面上的“Reset All”功能
+//        reg.addInitParameter("resetEnable", "false");
         return reg;
     }
 
